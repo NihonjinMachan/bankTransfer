@@ -1,0 +1,11 @@
+version: '2'
+services:
+  web:
+    build: node:7.7.2-alpine
+    working_dir: /usr/app/
+    command: npm start 
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
