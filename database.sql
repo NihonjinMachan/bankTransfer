@@ -1,0 +1,18 @@
+DROP TABLE Transactions;
+DROP TABLE Balances;
+
+CREATE TABLE Balances (
+accountNr CHAR(8) PRIMARY KEY,
+balance INT
+)ENGINE=INNODB;
+
+CREATE TABLE Transactions (
+reference INT PRIMARY KEY,
+amount INT,
+accountNr CHAR(8),
+FOREIGN KEY (accountNr) REFERENCES Balances (accountNr)
+)ENGINE=INNODB;
+
+INSERT INTO Balances VALUES ('NM152840', 1000);
+INSERT INTO Balances VALUES ('NM152852', 2500);
+INSERT INTO Balances VALUES ('NM152863', 4000);
