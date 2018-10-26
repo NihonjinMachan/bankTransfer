@@ -1,16 +1,30 @@
-const mysql = require('mysql2');
 const express = require('express');
+const db = require('./custom_modules/dbConnect');
+const bodyParser = require('body-parser');
 const app = express();
 
+//accessing static front-end files
 app.use(express.static('./public'));
 
+//parsing data sent in a POST request
+app.use(bodyParser.urlencoded({extended : false}));
+
+//load home page
 app.get('/', function (req, res) {
     res.sendFile('/public/index.html');
 });
 
-// POST /transfer {from:1, to:2, amount:25}
+// POST /transfer {sender:1, receiver:2, amount:25}
 app.post('/transfer', function (req, res) {
-    //your code here
+    var queryString = "SELECT balance FROM balances WHERE accountNr = ?";
+    db.connection.query(queryString, [req.body.sender], (err, rows, fields)=>{
+        if(err){ 
+            console.log("Query Error");
+            res.sendStatus(500);  //internal server error
+        }
+        res.json(rows);
+    });
+    /*
     res.send({
         "id":45,
         "from":{
@@ -21,7 +35,8 @@ app.post('/transfer', function (req, res) {
         },
         "transfered": 25
     });
-})
+    */
+});
 
 app.listen(3000, function () {
     console.log(`Listening on port 3000!`);

@@ -7,7 +7,7 @@ balance INT
 )ENGINE=INNODB;
 
 CREATE TABLE Transactions (
-reference INT PRIMARY KEY,
+reference INT PRIMARY KEY AUTO_INCREMENT,
 amount INT,
 accountNr CHAR(8),
 FOREIGN KEY (accountNr) REFERENCES Balances (accountNr)
