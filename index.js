@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const db = require('./custom_modules/dbConnect');
 const validate = require('./custom_modules/validate');
 const transaction = require('./custom_modules/transaction');
 const response = require('./custom_modules/response');
@@ -20,7 +21,7 @@ app.get('/', function (req, res) {
 app.post('/transfer', function (req, res) {
 
     //data validation
-    validate(req.body, (err, result)=>{
+    validate(req.body, db.pool, (err, result)=>{
         if(err){
             res.send(`${err}. Please go back to homepage and try again.`);
         }
@@ -33,13 +34,13 @@ app.post('/transfer', function (req, res) {
             }
 
             //perform transaction
-            transaction(transactionData, (err, result)=>{
+            transaction(transactionData, db.pool, (err, result)=>{
                 if(err){
                     res.send(`${err}`);
                 }
                 else{
                     //final response
-                    response(transactionData, (err, result)=>{
+                    response(transactionData, db.pool, (err, result)=>{
                         if(err){
                             res.send(`${err}`);
                         }

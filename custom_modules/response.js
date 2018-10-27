@@ -1,7 +1,4 @@
-const dbConnect = require('./dbConnect');
-const db = dbConnect.pool;
-
-module.exports = function(payload, callback){
+module.exports = function(payload, db, callback){
 
     //final response object
     var response = {};

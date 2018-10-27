@@ -1,7 +1,4 @@
-const dbConnect = require('./dbConnect');
-var db = dbConnect.pool;
-
-module.exports = function(payload, callback){
+module.exports = function(payload, db, callback){
 
     //check if all necessary fields are present
     if(!payload.sender.trim() || !payload.receiver.trim() || !payload.amount){ //trim to remove white spaces
