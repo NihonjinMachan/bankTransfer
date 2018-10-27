@@ -20,6 +20,7 @@ module.exports = function(payload, db, callback){
     }
 
     //check if the amount to be transferred is available in the sender's account
+    var checkAccountQuery = "SELECT * FROM `balances` WHERE accountNr = ? OR accountNr = ?"
     var queryString = "SELECT balance FROM balances WHERE accountNr = ?";
     var balance;
     db.getConnection((err, conn)=>{
@@ -29,19 +30,31 @@ module.exports = function(payload, db, callback){
         }
         else{
             console.log("Connection to dB established [validate.js]");
-            conn.query(queryString, [payload.sender], (err, rows, fields)=>{
+            conn.query(checkAccountQuery, [payload.sender, payload.receiver], (err, rows, fields)=>{
                 if(err){
                     callback("ERROR: Internal server error (Query error)", null);
                     return;
                 }
-                balance = rows[0].balance;
-                if(!(balance > payload.amount)){
-                    conn.release();
-                    callback("ERROR: Account must have enough funds to make the transfer", null);
+                if(!(rows.length === 2)){
+                    callback("ERROR: Invalid account/s", null);
+                    return;
                 }
                 else{
-                    conn.release();
-                    callback(null, true);
+                    conn.query(queryString, [payload.sender], (err, rows, fields)=>{
+                        if(err){
+                            callback("ERROR: Internal server error (Query error)", null);
+                            return;
+                        }
+                        balance = rows[0].balance;
+                        if(!(balance > payload.amount)){
+                            conn.release();
+                            callback("ERROR: Account must have enough funds to make the transfer", null);
+                        }
+                        else{
+                            conn.release();
+                            callback(null, true);
+                        }
+                    });
                 }
             });
         }

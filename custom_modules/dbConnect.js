@@ -8,14 +8,4 @@ const pool = mysql.createPool({
     database: 'exercise'
 });
 
-/*
-//connection check to make sure database is available
-connection.connect((err)=>{
-    if(err){
-        throw err;
-    } 
-    console.log("Connection successful");  
-});
-*/
-
 module.exports = {pool}  
