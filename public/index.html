@@ -12,11 +12,11 @@
     <h1>Fast&Secure Money Transfer</h1>
     <form class="transferForm" method="POST" action="/transfer" onsubmit="if(!confirm('Do you want to make the transaction?')){location.reload(); return false;};">
         <label for="sender">Sender Account</label>
-        <p><input type="text" name="sender"></p>
+        <p><input type="text" name="sender" required></p>
         <label for="receiver">Receiver Account</label>
-        <p><input type="text" name="receiver"></p>
+        <p><input type="text" name="receiver" required></p>
         <label for="amount">Transfer Amount</label>
-        <p><input type="number" name="amount"></p>
+        <p><input type="number" name="amount" required></p>
         <button type="submit">Transfer</button>
     </form>
 </body>

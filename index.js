@@ -1,6 +1,7 @@
 const express = require('express');
-const db = require('./custom_modules/dbConnect');
 const bodyParser = require('body-parser');
+const db = require('./custom_modules/dbConnect');
+const validate = require('./custom_modules/validate');
 const app = express();
 
 //accessing static front-end files
@@ -16,6 +17,23 @@ app.get('/', function (req, res) {
 
 // POST /transfer {sender:1, receiver:2, amount:25}
 app.post('/transfer', function (req, res) {
+
+    //data validation
+    validate(req.body, db, (err, result)=>{
+        if(err){
+            res.send(`${err}. Please go back to homepage and try again.`);
+        }
+
+        //creating a white list for added security
+        var transactionData = {
+            sender: req.body.sender,
+            receiver: req.body.receiver,
+            amount: req.body.amount
+        }
+
+        
+    });
+    /*
     var queryString = "SELECT balance FROM balances WHERE accountNr = ?";
     db.connection.query(queryString, [req.body.sender], (err, rows, fields)=>{
         if(err){ 
@@ -24,7 +42,6 @@ app.post('/transfer', function (req, res) {
         }
         res.json(rows);
     });
-    /*
     res.send({
         "id":45,
         "from":{
