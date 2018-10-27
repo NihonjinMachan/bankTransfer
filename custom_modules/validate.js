@@ -1,4 +1,7 @@
-module.exports = function(payload, dbConnect, callback){
+const dbConnect = require('./dbConnect');
+var db = dbConnect.pool;
+
+module.exports = function(payload, callback){
 
     //check if all necessary fields are present
     if(!payload.sender.trim() || !payload.receiver.trim() || !payload.amount){ //trim to remove white spaces
@@ -22,19 +25,28 @@ module.exports = function(payload, dbConnect, callback){
     //check if the amount to be transferred is available in the sender's account
     var queryString = "SELECT balance FROM balances WHERE accountNr = ?";
     var balance;
-    dbConnect.connection.query(queryString, [payload.sender], (err, rows, fields)=>{
+    db.getConnection((err, conn)=>{
         if(err){
-            callback("ERROR: Internal server error (Query error)", null);
-            return;
-        }
-        balance = rows[0].balance;
-        if(!(balance > payload.amount)){
-            callback("ERROR: Account must have enough funds to make the transfer", null);
+            callback("ERROR: Internal server error (Connection error)", null);
             return;
         }
         else{
-            callback(null, true);
-            return;
+            console.log("Connection to dB established [validate.js]");
+            conn.query(queryString, [payload.sender], (err, rows, fields)=>{
+                if(err){
+                    callback("ERROR: Internal server error (Query error)", null);
+                    return;
+                }
+                balance = rows[0].balance;
+                if(!(balance > payload.amount)){
+                    conn.release();
+                    callback("ERROR: Account must have enough funds to make the transfer", null);
+                }
+                else{
+                    conn.release();
+                    callback(null, true);
+                }
+            });
         }
     });
 }

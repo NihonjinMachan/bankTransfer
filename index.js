@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const db = require('./custom_modules/dbConnect');
 const validate = require('./custom_modules/validate');
+const transaction = require('./custom_modules/transaction');
+const response = require('./custom_modules/response');
 const app = express();
 
 //accessing static front-end files
@@ -19,40 +20,46 @@ app.get('/', function (req, res) {
 app.post('/transfer', function (req, res) {
 
     //data validation
-    validate(req.body, db, (err, result)=>{
+    validate(req.body, (err, result)=>{
         if(err){
             res.send(`${err}. Please go back to homepage and try again.`);
         }
+        else{
+            //creating a white list for added security
+            var transactionData = {
+                sender: req.body.sender,
+                receiver: req.body.receiver,
+                amount: req.body.amount
+            }
 
-        //creating a white list for added security
-        var transactionData = {
-            sender: req.body.sender,
-            receiver: req.body.receiver,
-            amount: req.body.amount
+            //perform transaction
+            transaction(transactionData, (err, result)=>{
+                if(err){
+                    res.send(`${err}`);
+                }
+                else{
+                    //final response
+                    response(transactionData, (err, result)=>{
+                        if(err){
+                            res.send(`${err}`);
+                        }
+                        res.send({
+                            "id": result.reference,
+                            "sender":{
+                                "accountNr": transactionData.sender,
+                                "New balance": result.senderBalance
+                            },
+                            "receiver":{
+                                "accountNr": transactionData.receiver,
+                                "New balance": result.receiverBalance                        
+                            },
+                            "transferAmount": transactionData.amount
+                        });
+                    });
+                }
+            });
         }
-
-        
     });
-    /*
-    var queryString = "SELECT balance FROM balances WHERE accountNr = ?";
-    db.connection.query(queryString, [req.body.sender], (err, rows, fields)=>{
-        if(err){ 
-            console.log("Query Error");
-            res.sendStatus(500);  //internal server error
-        }
-        res.json(rows);
-    });
-    res.send({
-        "id":45,
-        "from":{
-            "id":1, "balance": 25
-        },
-        "to":{
-            "id":2,"balance": 125
-        },
-        "transfered": 25
-    });
-    */
 });
 
 app.listen(3000, function () {
