@@ -19,6 +19,7 @@ module.exports = function(payload, db, callback){
         return;
     }
 
+    //check if accounts entered are valid
     //check if the amount to be transferred is available in the sender's account
     var checkAccountQuery = "SELECT * FROM `balances` WHERE accountNr = ? OR accountNr = ?"
     var queryString = "SELECT balance FROM balances WHERE accountNr = ?";
