@@ -1,11 +1,13 @@
 # Bank boostrap
 
 #npm modules used:
+
     1- express: Routing 
     2- body-parser: Parsing POST request data
     3- mysql2: MySQL dB connectivity
 
 #external software used:
+
     1- XAMPP: Local MySQL dB
     2- Postman: Multiple request testing
     3- Google Chrome: Single client testing
@@ -13,6 +15,7 @@
     5- VS Code: Text editor
 
 #SQL file explanation (database.sql):
+
     - Any pre-existing 'Balances' and 'Transactions' tables are dropped before new ones are created. This is done
     to remove duplicate data.
 
@@ -32,6 +35,7 @@
 
 #Custom module details:
 #dbConnect.js:
+
     - dbConnect is the external module that helps in connecting to the MySQL dB.
 
     - It establishes a connection using a connection pool.
@@ -44,6 +48,7 @@
     - Finally, the connection is exported as an object to be used by other modules.
 
 #validate.js:
+
     - validate module is used to ensure the data entered by the user is valid by performing a few tests. 
     It exports a function that takes in a request body payload, dB connection and callback function as
     parameters.
@@ -66,6 +71,7 @@
     process to remove any junk data if present. (Not part of validate.js; code in index.js)  
 
 #transaction.js:
+
     - transaction module is used to perform transfer transactions. It exports a function that takes in 
     a request body payload, dB connection and callback function as parameters.
 
@@ -79,6 +85,7 @@
     occuring.  
 
 #response.js:
+
     - The final piece of the program, the response module queries for the latest transaction reference ID as
     well as the current balance in the sender's and receiver's accounts. It generates and returns a response
     object with the queried fields. It exports a function that takes in a request body payload, dB connection 
@@ -88,12 +95,14 @@
     SELECT queries are complete before returning the response object.   
 
 #Main program (index.js):
+
     - index.js is the main backbone program that establishes the express routes as well calls the 
     external modules in the right order.
 
     - The final output of the main program is the response object mentioned in the requirments spec.
 
 #Testing:
+
     - All of the testing was done on the browser as well as Postman. Therefore, no test code was 
     written in the 'test' folder.
 
@@ -111,6 +120,7 @@
     were tested and the results provided were accurate.
 
 #Additional notes:
+
     - Since I am not knowledgeable in Docker, the docker-compose.yml was not used for this project.
 
     - The request and response objects were not changed structurally and are as per the requirements 
@@ -120,5 +130,9 @@
     MySQL tansactions are used, rollbacks are preformed and the data is kept secure and consistent.
     Now that the data is secure, the next thing to do is to generate a front-end "Error" page 
     informing the user of technical difficulties or move to a backup database. 
+    
+    - Finally, the use case where the user pushes the transfer button twice accidentally can be prevented
+    by implemented a confirmation box in the front-end. The allows the user a second chance to confirm their
+    actions before making the transfer.
 
 
