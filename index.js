@@ -44,18 +44,20 @@ app.post('/transfer', function (req, res) {
                         if(err){
                             res.send(`${err}`);
                         }
-                        res.send({
-                            "id": result.reference,
-                            "sender":{
-                                "accountNr": transactionData.sender,
-                                "New balance": result.senderBalance
-                            },
-                            "receiver":{
-                                "accountNr": transactionData.receiver,
-                                "New balance": result.receiverBalance                        
-                            },
-                            "transferAmount": transactionData.amount
-                        });
+                        else{
+                            res.send({
+                                "id": result.reference,
+                                "sender":{
+                                    "accountNr": transactionData.sender,
+                                    "New balance": result.senderBalance
+                                },
+                                "receiver":{
+                                    "accountNr": transactionData.receiver,
+                                    "New balance": result.receiverBalance                        
+                                },
+                                "transferAmount": transactionData.amount
+                            });
+                        }
                     });
                 }
             });
